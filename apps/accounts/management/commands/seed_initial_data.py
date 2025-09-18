@@ -6,9 +6,9 @@ from django.core.management.base import BaseCommand
 from django.utils import timezone
 
 from accounts.models import Company, User
+from catalogs.models import CompanyModuleLicense, Module
 from rbac.models import Function, Role, RoleFunction, UserRole
 from settingsapp.models import SettingDict, SettingValue
-from catalogs.models import Module, CompanyModuleLicense
 
 
 class Command(BaseCommand):

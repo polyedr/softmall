@@ -2,14 +2,7 @@ from __future__ import annotations
 
 from rest_framework import serializers
 
-from .models import (
-    CompanyModuleLicense,
-    CompanyProperty,
-    Module,
-    PropertyCodeDict,
-    TimezoneDict,
-    UserProperty,
-)
+from .models import CompanyModuleLicense, CompanyProperty, Module, PropertyCodeDict, TimezoneDict, UserProperty
 
 
 class TimezoneDictSerializer(serializers.ModelSerializer):

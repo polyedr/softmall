@@ -23,6 +23,7 @@ class Role(models.Model):
 
 class Function(models.Model):
     """System-wide function/permission code."""
+
     name = models.CharField(max_length=128)
     code = models.CharField(max_length=64, unique=True)
     is_active = models.BooleanField(default=True)

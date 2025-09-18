@@ -2,8 +2,8 @@ import pytest
 from django.urls import reverse
 from rest_framework.test import APIClient
 
-
 pytestmark = pytest.mark.django_db
+
 
 def auth_client_for_new_company() -> tuple[APIClient, int, int]:
     """
@@ -39,12 +39,18 @@ def test_role_function_crud_and_assign_user_role():
     client, company_id, admin_id = auth_client_for_new_company()
 
     # create function (admin has users:edit)
-    r = client.post("/api/rbac/functions/", {"code": "users:export", "name": "Export users", "is_active": True}, format="json")
+    r = client.post(
+        "/api/rbac/functions/", {"code": "users:export", "name": "Export users", "is_active": True}, format="json"
+    )
     assert r.status_code == 201
     function_id = r.data["id"]
 
     # create role
-    r = client.post("/api/rbac/roles/", {"code": "manager", "name": "Manager", "company": company_id, "is_active": True}, format="json")
+    r = client.post(
+        "/api/rbac/roles/",
+        {"code": "manager", "name": "Manager", "company": company_id, "is_active": True},
+        format="json",
+    )
     assert r.status_code == 201
     role_id = r.data["id"]
 

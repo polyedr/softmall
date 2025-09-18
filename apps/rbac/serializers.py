@@ -3,8 +3,8 @@ from __future__ import annotations
 from django.utils import timezone
 from rest_framework import serializers
 
-from rbac.models import Function, Role, RoleFunction, UserRole
 from accounts.models import User
+from rbac.models import Function, Role, RoleFunction, UserRole
 
 
 class FunctionSerializer(serializers.ModelSerializer):

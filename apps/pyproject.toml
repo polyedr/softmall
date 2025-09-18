@@ -41,4 +41,3 @@ exclude = [
     ".pytest_cache",
 ]
 per-file-ignores = "project/settings_test.py: F403 F405"
-

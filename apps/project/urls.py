@@ -18,25 +18,17 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 
-
 # OpenAPI / Swagger / ReDoc (drf-spectacular)
-from drf_spectacular.views import (
-    SpectacularAPIView,
-    SpectacularRedocView,
-    SpectacularSwaggerView,
-)
-
+from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 
 urlpatterns = [
     # Admin
     path("admin/", admin.site.urls),
-
     # API (per-app URLConfs)
     path("api/accounts/", include("accounts.urls")),
     path("api/rbac/", include("rbac.urls")),
     path("api/settings/", include("settingsapp.urls")),
     path("api/catalogs/", include("catalogs.urls")),
-
     # OpenAPI schema (JSON)
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
     # Swagger UI (served from the schema above)

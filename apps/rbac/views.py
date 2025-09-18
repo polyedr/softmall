@@ -1,28 +1,38 @@
 from __future__ import annotations
 
 from django.utils import timezone
-from drf_spectacular.utils import OpenApiParameter, OpenApiResponse, extend_schema, extend_schema_view
+from drf_spectacular.utils import OpenApiResponse, extend_schema, extend_schema_view
 from rest_framework import mixins, permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from common.permissions import HasFunction
 from rbac.models import Function, Role, RoleFunction
-from .serializers import (
-    AssignUserRoleSerializer,
-    FunctionSerializer,
-    RoleFunctionSerializer,
-    RoleSerializer,
-)
+
+from .serializers import AssignUserRoleSerializer, FunctionSerializer, RoleFunctionSerializer, RoleSerializer
 
 
 @extend_schema_view(
     list=extend_schema(tags=["rbac"], description="Список функций."),
     retrieve=extend_schema(tags=["rbac"], description="Получить функцию."),
-    create=extend_schema(tags=["rbac"], description="Создать функцию.", request=FunctionSerializer, responses={201: FunctionSerializer}),
-    update=extend_schema(tags=["rbac"], description="Полное обновление функции.", request=FunctionSerializer, responses={200: FunctionSerializer}),
-    partial_update=extend_schema(tags=["rbac"], description="Частичное обновление функции.", request=FunctionSerializer, responses={200: FunctionSerializer}),
-    destroy=extend_schema(tags=["rbac"], description="Удалить функцию.", responses={204: OpenApiResponse(description="Deleted")}),
+    create=extend_schema(
+        tags=["rbac"], description="Создать функцию.", request=FunctionSerializer, responses={201: FunctionSerializer}
+    ),
+    update=extend_schema(
+        tags=["rbac"],
+        description="Полное обновление функции.",
+        request=FunctionSerializer,
+        responses={200: FunctionSerializer},
+    ),
+    partial_update=extend_schema(
+        tags=["rbac"],
+        description="Частичное обновление функции.",
+        request=FunctionSerializer,
+        responses={200: FunctionSerializer},
+    ),
+    destroy=extend_schema(
+        tags=["rbac"], description="Удалить функцию.", responses={204: OpenApiResponse(description="Deleted")}
+    ),
 )
 class FunctionViewSet(
     mixins.CreateModelMixin,
@@ -40,10 +50,21 @@ class FunctionViewSet(
 @extend_schema_view(
     list=extend_schema(tags=["rbac"], description="Список ролей."),
     retrieve=extend_schema(tags=["rbac"], description="Получить роль."),
-    create=extend_schema(tags=["rbac"], description="Создать роль.", request=RoleSerializer, responses={201: RoleSerializer}),
-    update=extend_schema(tags=["rbac"], description="Полное обновление роли.", request=RoleSerializer, responses={200: RoleSerializer}),
-    partial_update=extend_schema(tags=["rbac"], description="Частичное обновление роли.", request=RoleSerializer, responses={200: RoleSerializer}),
-    destroy=extend_schema(tags=["rbac"], description="Удалить роль.", responses={204: OpenApiResponse(description="Deleted")}),
+    create=extend_schema(
+        tags=["rbac"], description="Создать роль.", request=RoleSerializer, responses={201: RoleSerializer}
+    ),
+    update=extend_schema(
+        tags=["rbac"], description="Полное обновление роли.", request=RoleSerializer, responses={200: RoleSerializer}
+    ),
+    partial_update=extend_schema(
+        tags=["rbac"],
+        description="Частичное обновление роли.",
+        request=RoleSerializer,
+        responses={200: RoleSerializer},
+    ),
+    destroy=extend_schema(
+        tags=["rbac"], description="Удалить роль.", responses={204: OpenApiResponse(description="Deleted")}
+    ),
 )
 class RoleViewSet(
     mixins.CreateModelMixin,
@@ -63,7 +84,12 @@ class RoleViewSet(
         responses={201: RoleFunctionSerializer},
         description="Привязать функцию к роли с интервалом активности.",
     )
-    @action(detail=True, methods=["post"], url_path="functions", permission_classes=[permissions.IsAuthenticated, HasFunction.required("users:edit")])
+    @action(
+        detail=True,
+        methods=["post"],
+        url_path="functions",
+        permission_classes=[permissions.IsAuthenticated, HasFunction.required("users:edit")],
+    )
     def add_function(self, request, pk=None):
         payload = {
             "role": pk,

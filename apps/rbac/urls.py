@@ -3,7 +3,6 @@ from rest_framework.routers import DefaultRouter
 
 from .views import AssignUserRoleViewSet, FunctionViewSet, RoleFunctionViewSet, RoleViewSet
 
-
 router = DefaultRouter()
 router.register("functions", FunctionViewSet, basename="function")
 router.register("roles", RoleViewSet, basename="role")

@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import RegexValidator
 from django.db import models
@@ -9,6 +8,7 @@ from django.utils import timezone
 
 class Company(models.Model):
     """Tenant/company with active period and licensing flags."""
+
     name = models.CharField(max_length=255, unique=True)
     inn = models.CharField(max_length=12, blank=True)
     is_active = models.BooleanField(default=True)
@@ -32,6 +32,7 @@ username_validator = RegexValidator(r"^[\w.@+-]+$", "Enter a valid username.")
 
 class User(AbstractUser):
     """Custom user bound to a company (tenant)."""
+
     company = models.ForeignKey(Company, on_delete=models.PROTECT, related_name="users", null=True, blank=True)
     is_locked = models.BooleanField(default=False)
 

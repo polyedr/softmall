@@ -2,11 +2,12 @@ from __future__ import annotations
 
 from django.utils import timezone
 from drf_spectacular.utils import OpenApiExample, OpenApiParameter, OpenApiResponse, extend_schema
-from rest_framework import mixins, permissions, viewsets, status
+from rest_framework import mixins, permissions, status, viewsets
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from common.permissions import HasFunction
+
 from .models import SettingDict, SettingValue
 from .serializers import SettingDictSerializer, SettingValueSerializer
 
@@ -55,6 +56,7 @@ class SettingValueViewSet(
 
 class EffectiveSettingView(APIView):
     """Вернуть эффективное значение настройки по коду: user > company (только активные по времени)."""
+
     permission_classes = [permissions.IsAuthenticated, HasFunction.required("settings:view")]
 
     @extend_schema(
@@ -94,18 +96,30 @@ class EffectiveSettingView(APIView):
             return Response({"detail": "Setting not found."}, status=status.HTTP_404_NOT_FOUND)
 
         user_val = (
-            SettingValue.objects.filter(setting=sdict, user=request.user, active_from__lte=now)
-            .filter(active_to__isnull=True) | SettingValue.objects.filter(setting=sdict, user=request.user, active_to__gte=now)
-        ).order_by("-active_from").first()
+            (
+                SettingValue.objects.filter(setting=sdict, user=request.user, active_from__lte=now).filter(
+                    active_to__isnull=True
+                )
+                | SettingValue.objects.filter(setting=sdict, user=request.user, active_to__gte=now)
+            )
+            .order_by("-active_from")
+            .first()
+        )
 
         if user_val:
             return Response({"code": code, "scope": "user", "value": user_val.value})
 
         company_id = getattr(request.user, "company_id", None)
         comp_val = (
-            SettingValue.objects.filter(setting=sdict, company_id=company_id, active_from__lte=now)
-            .filter(active_to__isnull=True) | SettingValue.objects.filter(setting=sdict, company_id=company_id, active_to__gte=now)
-        ).order_by("-active_from").first()
+            (
+                SettingValue.objects.filter(setting=sdict, company_id=company_id, active_from__lte=now).filter(
+                    active_to__isnull=True
+                )
+                | SettingValue.objects.filter(setting=sdict, company_id=company_id, active_to__gte=now)
+            )
+            .order_by("-active_from")
+            .first()
+        )
 
         if comp_val:
             return Response({"code": code, "scope": "company", "value": comp_val.value})

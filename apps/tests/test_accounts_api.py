@@ -2,8 +2,8 @@ import pytest
 from django.urls import reverse
 from rest_framework.test import APIClient
 
-
 pytestmark = pytest.mark.django_db
+
 
 def test_register_company_and_me_flow():
     client = APIClient()
