@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 from django.utils import timezone
 from rest_framework import serializers
 
@@ -36,7 +35,11 @@ class RegisterCompanySerializer(serializers.Serializer):
 
         # базовая роль admin и функции
         role, _ = Role.objects.get_or_create(company=company, code="admin", defaults={"name": "Administrator"})
-        for code, name in [("users:view", "View users"), ("users:edit", "Edit users"), ("settings:view", "View settings")]:
+        for code, name in [
+            ("users:view", "View users"),
+            ("users:edit", "Edit users"),
+            ("settings:view", "View settings"),
+        ]:
             fn, _ = Function.objects.get_or_create(code=code, defaults={"name": name})
             RoleFunction.objects.get_or_create(role=role, function=fn, defaults={"active_from": now})
         UserRole.objects.get_or_create(user=user, role=role, defaults={"active_from": now})
@@ -92,5 +95,7 @@ class MeSerializer(serializers.ModelSerializer):
         fns = RoleFunction.objects.filter(
             role_id__in=role_ids,
             active_from__lte=now,
-        ).filter(active_to__isnull=True) | RoleFunction.objects.filter(role_id__in=role_ids, active_to__gte=now)
+        ).filter(
+            active_to__isnull=True
+        ) | RoleFunction.objects.filter(role_id__in=role_ids, active_to__gte=now)
         return list(fns.values_list("function__code", flat=True).distinct())

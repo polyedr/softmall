@@ -16,12 +16,14 @@ class HasFunction(BasePermission):
         class MyView(...):
             permission_classes = [HasFunction.required("users:view")]
     """
+
     required_code: str | None = None
 
     @classmethod
     def required(cls, code: str) -> type["HasFunction"]:
         class _Req(cls):
             required_code = code
+
         return _Req
 
     def has_permission(self, request: Request, view: View) -> bool:
@@ -40,19 +42,15 @@ class HasFunction(BasePermission):
         except Function.DoesNotExist:
             return False
 
-        roles_qs = (
-            UserRole.objects.filter(user=user, active_from__lte=now)
-            .filter(models.Q(active_to__isnull=True) | models.Q(active_to__gte=now))
+        roles_qs = UserRole.objects.filter(user=user, active_from__lte=now).filter(
+            models.Q(active_to__isnull=True) | models.Q(active_to__gte=now)
         )
         if not roles_qs.exists():
             return False
 
-        rf_qs = (
-            RoleFunction.objects.filter(
-                role_id__in=roles_qs.values_list("role_id", flat=True),
-                function=fn,
-                active_from__lte=now,
-            )
-            .filter(models.Q(active_to__isnull=True) | models.Q(active_to__gte=now))
-        )
+        rf_qs = RoleFunction.objects.filter(
+            role_id__in=roles_qs.values_list("role_id", flat=True),
+            function=fn,
+            active_from__lte=now,
+        ).filter(models.Q(active_to__isnull=True) | models.Q(active_to__gte=now))
         return rf_qs.exists()

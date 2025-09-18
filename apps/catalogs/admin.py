@@ -1,13 +1,6 @@
 from django.contrib import admin
 
-from .models import (
-    TimezoneDict,
-    PropertyCodeDict,
-    UserProperty,
-    CompanyProperty,
-    Module,
-    CompanyModuleLicense,
-)
+from .models import CompanyModuleLicense, CompanyProperty, Module, PropertyCodeDict, TimezoneDict, UserProperty
 
 
 @admin.register(TimezoneDict)

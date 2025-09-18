@@ -29,7 +29,6 @@ class Migration(migrations.Migration):
                 name="ix_user_company_joined",
             ),
         ),
-
         # Company
         migrations.AddIndex(
             model_name="company",

@@ -3,17 +3,19 @@ from __future__ import annotations
 import hashlib
 
 from django.db import transaction
-from drf_spectacular.utils import OpenApiExample, OpenApiResponse, extend_schema, OpenApiParameter
+from drf_spectacular.utils import OpenApiExample, OpenApiParameter, OpenApiResponse, extend_schema
 from rest_framework import permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from common.models import IdempotencyKey
+
 from .serializers import MeSerializer, RegisterCompanySerializer, RegisterUserSerializer
 
 
 class RegisterCompanyView(APIView):
     permission_classes = [permissions.AllowAny]
+
     @extend_schema(
         tags=["accounts"],
         request=RegisterCompanySerializer,
@@ -23,7 +25,7 @@ class RegisterCompanyView(APIView):
                 type=str,
                 location=OpenApiParameter.HEADER,
                 description="Ключ для идемпотентного запроса. "
-                            "Повторный POST с тем же key и body вернёт сохранённый ответ."
+                "Повторный POST с тем же key и body вернёт сохранённый ответ.",
             ),
         ],
         responses={
@@ -40,12 +42,9 @@ class RegisterCompanyView(APIView):
             ),
             200: OpenApiResponse(
                 response=dict,
-                description="Повторный запрос с тем же Idempotency-Key и телом. "
-                            "Возвращён сохранённый результат.",
+                description="Повторный запрос с тем же Idempotency-Key и телом. " "Возвращён сохранённый результат.",
             ),
-            409: OpenApiResponse(
-                description="Конфликт: Idempotency-Key совпадает, но тело запроса отличается."
-            ),
+            409: OpenApiResponse(description="Конфликт: Idempotency-Key совпадает, но тело запроса отличается."),
         },
         description=(
             "Создаёт компанию, администратора, роль `admin` и базовые функции.\n\n"

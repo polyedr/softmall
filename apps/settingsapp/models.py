@@ -8,6 +8,7 @@ from accounts.models import Company, User
 
 class SettingDict(models.Model):
     """Dictionary of available settings."""
+
     code = models.CharField(max_length=64, unique=True)
     name = models.CharField(max_length=128)
     description = models.TextField(blank=True)
@@ -18,6 +19,7 @@ class SettingDict(models.Model):
 
 class SettingValue(models.Model):
     """Actual setting values scoped to user or company, with active intervals."""
+
     setting = models.ForeignKey(SettingDict, on_delete=models.CASCADE, related_name="values")
     company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name="settings", null=True, blank=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="settings", null=True, blank=True)

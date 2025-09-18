@@ -2,7 +2,6 @@ import pytest
 from django.urls import reverse
 from rest_framework.test import APIClient
 
-
 pytestmark = pytest.mark.django_db
 
 
@@ -36,6 +35,7 @@ def test_settings_effective_company_scope():
     # создадим словарь настройки и company-значение
     # (эти ручки защищены users:edit — у админа она есть после register-company)
     from settingsapp.models import SettingDict
+
     sd = SettingDict.objects.create(code="theme", name="Theme")
 
     r = client.post(
@@ -59,6 +59,7 @@ def test_catalogs_company_properties_isolation():
 
     # заводим код свойства (глобальный справочник)
     from catalogs.models import PropertyCodeDict
+
     pcode = PropertyCodeDict.objects.create(code="ui.theme", name="UI Theme")
 
     # в компании 1 создаём company-property
