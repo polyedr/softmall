@@ -10,6 +10,12 @@ DATABASES = {
     }
 }
 
+# Remove the throttling locally
+REST_FRAMEWORK = {
+    **REST_FRAMEWORK,
+    "DEFAULT_THROTTLE_CLASSES": [],
+}
+
 # --- Celery: run tasks in-process during tests ---
 CELERY_TASK_ALWAYS_EAGER = True
 CELERY_BROKER_URL = "memory://"
