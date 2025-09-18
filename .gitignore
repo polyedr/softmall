@@ -1,0 +1,46 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+*.egg
+*.pyo
+
+# Virtual env
+.venv/
+
+# Django / DRF
+*.sqlite3
+db.sqlite3
+/media/
+staticfiles/
+*.log
+
+# IDE / editor
+.vscode/
+.idea/
+
+# Pytest / coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Docker
+.env.docker
+.env.local
+docker-compose.override.yml
+*.log
+*.pid
+
+# Volumes / data
+pgdata/
+redisdata/
+
+# Pyenv
+.python-version
+
+# Info
+info/
+
+# Envs
+apps/.env
+
