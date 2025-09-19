@@ -21,11 +21,54 @@
 
 ---
 
-## Docker
+## SoftMall — Docker
 
-См. отдельную ветку [feature/docker](https://github.com/polyedr/softmall_test/tree/feature/docker)
-для запуска проекта в контейнерах (Postgres, Redis, Celery, Django).
-В этой ветке — локальный запуск.
+Запуск проекта в контейнерах (Django, Postgres, Redis, Celery).
+
+### Быстрый старт
+
+```bash
+git checkout feature/docker
+cp .env.docker.example .env.docker
+docker-compose up --build
+```
+
+После запуска:
+- API → http://localhost:8000/api/accounts/me
+- Swagger → http://localhost:8000/api/schema/swagger-ui/
+- Admin → http://localhost:8000/admin/ (admin / admin)
+
+### Сервисы
+
+- **web** — Django + Gunicorn
+- **worker** — Celery worker
+- **db** — Postgres 16
+- **redis** — Redis 7
+
+Данные Postgres сохраняются в volume `postgres_data`.
+
+### Полезные команды
+
+- Пересобрать образы (после изменения зависимостей или entrypoint):
+  ```bash
+  sudo docker compose build web worker
+  sudo docker compose up -d
+  ```
+
+- Перезапустить контейнеры без пересборки:
+  ```bash
+  sudo docker compose restart
+  ```
+
+- Миграции вручную:
+  ```bash
+  sudo docker compose exec web python manage.py migrate
+  ```
+
+- Зайти в контейнер Django:
+  ```bash
+  sudo docker compose exec web bash
+  ```
 
 ---
 
@@ -51,11 +94,23 @@ source .venv/bin/activate
 
 # 3) Установка зависимостей
 pip install -r requirements.txt -r requirements-dev.txt
+```
+```sql
+# 4) Создание БД и пользователя
+CREATE USER softmall_user WITH PASSWORD 's63V-}5|KE|H';
+DROP DATABASE IF EXISTS softmall_db;
+CREATE DATABASE softmall_db OWNER softmall_user;
 
-# 4) Создаём .env (см. ниже)
+\c softmall_db
+GRANT ALL PRIVILEGES ON DATABASE softmall_db TO softmall_user;
+ALTER SCHEMA public OWNER TO softmall_user;
+GRANT ALL ON SCHEMA public TO softmall_user;
+```
+```bash
+# 5) Создаём .env (см. ниже)
 cp .env.example .env    # или вручную
 
-# 5) Миграции + сиды + запуск
+# 6) Миграции + сиды + запуск
 python manage.py migrate
 python manage.py seed_initial_data
 python manage.py runserver
@@ -86,13 +141,14 @@ CELERY_RESULT_BACKEND=redis://localhost:6379/1
 ## PostgreSQL — создание пользователя и БД
 
 ```sql
-CREATE USER softmall_user WITH PASSWORD 'smp_pass';
+CREATE USER softmall_user WITH PASSWORD 's63V-}5|KE|H';
+DROP DATABASE IF EXISTS softmall_db;
 CREATE DATABASE softmall_db OWNER softmall_user;
 
 \c softmall_db
+GRANT ALL PRIVILEGES ON DATABASE softmall_db TO softmall_user;
 ALTER SCHEMA public OWNER TO softmall_user;
 GRANT ALL ON SCHEMA public TO softmall_user;
-GRANT ALL PRIVILEGES ON DATABASE softmall_db TO softmall_user;
 ```
 
 ---

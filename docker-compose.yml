@@ -1,0 +1,50 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env.docker
+    environment:
+      - ROLE=web
+      - RUN_MIGRATIONS=true
+    depends_on:
+      - db
+      - redis
+
+  worker:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    volumes:
+      - .:/app
+    env_file:
+      - .env.docker
+    environment:
+      - ROLE=worker
+    depends_on:
+      - db
+      - redis
+
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: ${DB_NAME:-softmall_db}
+      POSTGRES_USER: ${DB_USER:-softmall_user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-softmall_password}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5434:5432"
+
+  redis:
+    image: redis:7
+    ports:
+      - "6381:6379"
+
+volumes:
+  postgres_data:
